@@ -173,7 +173,7 @@ public class ProfilFragment extends Fragment implements ProfilContract.View {
 
         if (!TextUtils.isEmpty(idUser)) {
             // Menset nama title action bar
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Profil" + nama);
+            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Profil" +  nama);
 
             // Menampilkan data ke layar
             edtNama.setText(nama);

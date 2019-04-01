@@ -79,8 +79,7 @@ public interface ApiInterface {
     Call<DetailMakananResponse> getDetailMakanan(@Query("idmakanan") int idMakanan);
 
     // Mengambil data makanan berdasarkan id kategory
-    @GET("getmakananbykategory.php")
-    Call<MakananResponse> getMakananByCategory(@Query("idkategory") int idCategory);
-
+    @GET("getmakananbykategori.php")
+    Call<MakananResponse> getMakananByCategory(@Query("idkategori") int idCategory);
 
 }

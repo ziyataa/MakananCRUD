@@ -3,7 +3,9 @@ package com.ziyata.makanancrud.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,7 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
     public static final int TYPE_1 = 1;
     public static final int TYPE_2 = 2;
     public static final int TYPE_3 = 3;
+    public static final int TYPE_4 = 4;
 
     Integer viewType;
     private final Context context;
@@ -55,6 +58,9 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
             case TYPE_3:
                 view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_food_kategori, null);
                 return new FoodKategoriViewHolder(view);
+            case TYPE_4:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_food_by_kategori, null);
+                return new FoodNewsViewHolder(view);
             default:
                 return null;
         }
@@ -66,7 +72,7 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         final MakananData makananData = makananDataList.get(i);
 
         int mViewType = viewType;
-        switch (mViewType){
+        switch (mViewType) {
             case TYPE_1:
                 // Membuat holder untuk dapat mengakses widget
                 FoodNewsViewHolder foodNewsViewHolder = (FoodNewsViewHolder) holder;
@@ -130,7 +136,35 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
                 foodKategoriViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.i("cek idkategori adapter", "onClick: " + makananData.getIdKategori());
                         context.startActivity(new Intent(context, MakananByCategoryActivity.class).putExtra(Constant.KEY_EXTRA_ID_CATEGORY, makananData.getIdKategori()));
+                    }
+                });
+                break;
+            case TYPE_4:
+                // Membuat holder untuk dapat mengakses widget
+                FoodNewsViewHolder foodNewsViewHolder2 = (FoodNewsViewHolder) holder;
+
+                // Request option untuk error dan placheholder gambar
+                RequestOptions options4 = new RequestOptions().error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_broken_image);
+                Glide.with(context)
+                        .load(makananData.getUrlMakanan())
+                        .apply(options4)
+                        .into(foodNewsViewHolder2.imgMakanan);
+
+                // Menampilkan title dan jumlah view
+                foodNewsViewHolder2.txtTitle.setText(makananData.getNamaMakanan());
+                foodNewsViewHolder2.txtView.setText(makananData.getView());
+
+                // Menampilkan waktu upload
+                foodNewsViewHolder2.txtTime.setText(newDate(makananData.getInsertTime()));
+
+                // Membuat onClick
+                foodNewsViewHolder2.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Berpindah halaman ke detail
+                        context.startActivity(new Intent(context, DetailMakananActivity.class).putExtra(Constant.KEY_EXTRA_ID_MAKANAN, makananData.getIdMakanan()));
                     }
                 });
                 break;
@@ -152,7 +186,7 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         }
 
         // Kita cek format date yang kita miliki sesuai dengan yang kita inginkan
-        if (date != null){
+        if (date != null) {
             // Mengubah date yang dimiliki menjadi format date yang baru
             newDate = new SimpleDateFormat("dd MMMM yyyy HH:mm:ss").format(date);
         }
@@ -180,12 +214,12 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         ImageView imgMakanan;
         @BindView(R.id.txt_title)
         TextView txtTitle;
+        @BindView(R.id.txt_time)
+        TextView txtTime;
         @BindView(R.id.img_view)
         ImageView imgView;
         @BindView(R.id.txt_view)
         TextView txtView;
-        @BindView(R.id.txt_time)
-        TextView txtTime;
 
         public FoodNewsViewHolder(View view) {
             super(view);
@@ -216,6 +250,7 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         ImageView image;
         @BindView(R.id.txt_nama_kategory)
         TextView txtNamaKategory;
+
         public FoodKategoriViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);

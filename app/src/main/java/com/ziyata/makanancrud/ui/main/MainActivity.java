@@ -36,10 +36,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case R.id.navigation_makanan:
                     MakananFragment makananFragment = new MakananFragment();
                     loadFragment(makananFragment);
+                    getSupportActionBar().setTitle("Home");
                     return true;
                 case R.id.navigation_favorite:
                     FragmentFavorite favoriteFragment = new FragmentFavorite();
                     loadFragment(favoriteFragment);
+                    getSupportActionBar().setTitle("Favorite");
                     return true;
                 case R.id.navigation_profil:
                     ProfilFragment profilFragment = new ProfilFragment();
