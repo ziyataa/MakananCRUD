@@ -7,9 +7,9 @@
         android:title="Makanan"/>
 
     <item
-        android:id="@+id/navigation_favorite"
-        android:icon="@drawable/ic_favorite_border"
-        android:title="Favorite" />
+        android:id="@+id/navigation_kelola_makanan"
+        android:icon="@drawable/ic_kelola_makanan"
+        android:title="@string/kelola_makanan" />
 
     <item
         android:id="@+id/navigation_profil"

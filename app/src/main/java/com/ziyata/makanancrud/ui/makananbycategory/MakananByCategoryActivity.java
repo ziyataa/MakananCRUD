@@ -84,4 +84,10 @@ public class MakananByCategoryActivity extends AppCompatActivity implements Maka
         pbLoading.setVisibility(View.GONE);
         txtInfo.setText(msg);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMakananByKategoriPresenter.getListFoodByKategori(idCategory);
+    }
 }

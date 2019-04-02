@@ -3,7 +3,6 @@ package com.ziyata.makanancrud.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,7 +16,9 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ziyata.makanancrud.R;
 import com.ziyata.makanancrud.model.login.makanan.MakananData;
 import com.ziyata.makanancrud.ui.detailmakanan.DetailMakananActivity;
+import com.ziyata.makanancrud.ui.detailmakananbyuser.DetailMakananByUser;
 import com.ziyata.makanancrud.ui.makananbycategory.MakananByCategoryActivity;
+import com.ziyata.makanancrud.ui.uploadmakanan.UploadMakananActivity;
 import com.ziyata.makanancrud.utils.Constant;
 
 import java.text.ParseException;
@@ -29,10 +30,16 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHolder> {
+    // TYPE 1 untuk mekanan baru
     public static final int TYPE_1 = 1;
+    // TYPE 2 untuk makanan populer
     public static final int TYPE_2 = 2;
+    // TYPE 3 untuk kategori
     public static final int TYPE_3 = 3;
+    // TYPE 4 untuk makanan by kategori
     public static final int TYPE_4 = 4;
+    // TYPE 5 untuk makanan by user
+    public static final int TYPE_5 = 5;
 
     Integer viewType;
     private final Context context;
@@ -61,6 +68,9 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
             case TYPE_4:
                 view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_food_by_kategori, null);
                 return new FoodNewsViewHolder(view);
+            case TYPE_5:
+                view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_food_by_kategori, null);
+                return new FoodByUserViewHolder(view);
             default:
                 return null;
         }
@@ -168,6 +178,33 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
                     }
                 });
                 break;
+           case TYPE_5:
+            // Membuat holder untuk dapat mengakses widget
+            FoodByUserViewHolder foodByUserViewHolder= (FoodByUserViewHolder) holder;
+
+            // Request option untuk error dan placheholder gambar
+            RequestOptions options5 = new RequestOptions().error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_broken_image);
+            Glide.with(context)
+                    .load(makananData.getUrlMakanan())
+                    .apply(options5)
+                    .into(foodByUserViewHolder.imgMakanan);
+
+            // Menampilkan title dan jumlah view
+            foodByUserViewHolder.txtTitle.setText(makananData.getNamaMakanan());
+            foodByUserViewHolder.txtView.setText(makananData.getView());
+
+            // Menampilkan waktu upload
+            foodByUserViewHolder.txtTime.setText(newDate(makananData.getInsertTime()));
+
+            // Membuat onClick
+            foodByUserViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Berpindah halaman ke detail
+                    context.startActivity(new Intent(context, DetailMakananByUser.class).putExtra(Constant.KEY_EXTRA_ID_MAKANAN, makananData.getIdMakanan()));
+                }
+            });
+            break;
         }
     }
 
@@ -220,7 +257,6 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         ImageView imgView;
         @BindView(R.id.txt_view)
         TextView txtView;
-
         public FoodNewsViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -238,7 +274,6 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         TextView txtView;
         @BindView(R.id.txt_time)
         TextView txtTime;
-
         public FoodPopulerViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
@@ -250,10 +285,27 @@ public class AdapterMakanan extends RecyclerView.Adapter<AdapterMakanan.ViewHold
         ImageView image;
         @BindView(R.id.txt_nama_kategory)
         TextView txtNamaKategory;
-
         public FoodKategoriViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+    }
+
+    public class FoodByUserViewHolder extends ViewHolder {
+        @BindView(R.id.img_makanan)
+        ImageView imgMakanan;
+        @BindView(R.id.txt_title)
+        TextView txtTitle;
+        @BindView(R.id.txt_time)
+        TextView txtTime;
+        @BindView(R.id.img_view)
+        ImageView imgView;
+        @BindView(R.id.txt_view)
+        TextView txtView;
+        public FoodByUserViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+
         }
     }
 }

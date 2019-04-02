@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.ziyata.makanancrud.R;
 import com.ziyata.makanancrud.ui.favorite.FragmentFavorite;
 import com.ziyata.makanancrud.ui.makanan.MakananFragment;
+import com.ziyata.makanancrud.ui.makananbyuser.MakananByUserFragment;
 import com.ziyata.makanancrud.ui.profil.ProfilFragment;
 
 import butterknife.BindView;
@@ -36,12 +37,12 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 case R.id.navigation_makanan:
                     MakananFragment makananFragment = new MakananFragment();
                     loadFragment(makananFragment);
-                    getSupportActionBar().setTitle("Home");
+                    getSupportActionBar().setTitle("Makanan");
                     return true;
-                case R.id.navigation_favorite:
-                    FragmentFavorite favoriteFragment = new FragmentFavorite();
-                    loadFragment(favoriteFragment);
-                    getSupportActionBar().setTitle("Favorite");
+                case R.id.navigation_kelola_makanan:
+                    MakananByUserFragment makananByUserFragment= new MakananByUserFragment();
+                    loadFragment(makananByUserFragment);
+                    getSupportActionBar().setTitle("Kelola Makanan");
                     return true;
                 case R.id.navigation_profil:
                     ProfilFragment profilFragment = new ProfilFragment();

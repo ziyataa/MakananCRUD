@@ -25,7 +25,8 @@
         <activity android:name=".ui.register.RegisterActivity" />
         <activity android:name=".ui.uploadmakanan.UploadMakananActivity" />
         <activity android:name=".ui.detailmakanan.DetailMakananActivity" />
-        <activity android:name=".ui.makananbycategory.MakananByCategoryActivity"></activity>
+        <activity android:name=".ui.makananbycategory.MakananByCategoryActivity" />
+        <activity android:name=".ui.detailmakananbyuser.DetailMakananByUser"></activity>
     </application>
 
 </manifest>
