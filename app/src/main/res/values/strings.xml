@@ -13,4 +13,6 @@
     <string name="gender_female">Female</string>
     <string name="kelola_makanan">Kelola Makanan</string>
     <string name="save">save</string>
+    <string name="delete">delete</string>
+    <string name="update">update</string>
 </resources>

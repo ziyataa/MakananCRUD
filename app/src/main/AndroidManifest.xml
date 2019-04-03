@@ -22,11 +22,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.register.RegisterActivity" />
-        <activity android:name=".ui.uploadmakanan.UploadMakananActivity" />
-        <activity android:name=".ui.detailmakanan.DetailMakananActivity" />
-        <activity android:name=".ui.makananbycategory.MakananByCategoryActivity" />
-        <activity android:name=".ui.detailmakananbyuser.DetailMakananByUser"></activity>
+        <activity android:name=".ui.register.RegisterActivity" android:parentActivityName=".ui.main.MainActivity" />
+        <activity android:name=".ui.uploadmakanan.UploadMakananActivity" android:parentActivityName=".ui.main.MainActivity" />
+        <activity android:name=".ui.detailmakanan.DetailMakananActivity" android:parentActivityName=".ui.main.MainActivity" />
+        <activity android:name=".ui.makananbycategory.MakananByCategoryActivity" android:parentActivityName=".ui.main.MainActivity"/>
+        <activity android:name=".ui.detailmakananbyuser.DetailMakananByUser" android:parentActivityName=".ui.main.MainActivity"></activity>
     </application>
 
 </manifest>

@@ -113,10 +113,17 @@
                     android:layout_margin="16dp">
 
                     <Button
-                        android:id="@+id/btn_save"
+                        android:id="@+id/btn_update"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/save"
+                        android:text="@string/update"
+                        style="@style/Widget.AppCompat.Button.Colored"/>
+
+                    <Button
+                        android:id="@+id/btn_delete"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/delete"
                         style="@style/Widget.AppCompat.Button.Colored"/>
 
                 </LinearLayout>
