@@ -15,6 +15,7 @@ public interface DetailMakananByUserContract {
         void showDetailMakanan(MakananData makananData);
         void showMessage(String msg);
         void successDelete();
+        void successUpdate();
         void showSpinnerCategory(List<MakananData> categoryDataList);
     }
 
@@ -25,7 +26,8 @@ public interface DetailMakananByUserContract {
                                String namaMakanan,
                                String descMakanan,
                                String idCategory,
-                               String namaFotoMakanan);
+                               String namaFotoMakanan,
+                                String idMakanan);
         void deleteMakanan(String idMakanan, String namaFotoMakanan);
     }
 }

@@ -1,9 +1,14 @@
 package com.ziyata.makanancrud.ui.detailmakananbyuser;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityCompat;
@@ -28,6 +33,7 @@ import com.ziyata.makanancrud.model.login.makanan.MakananData;
 import com.ziyata.makanancrud.ui.detailmakanan.DetailMakananContract;
 import com.ziyata.makanancrud.utils.Constant;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +69,7 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
     private String idCategory, idMakanan;
     private MakananData mMakananData;
     private String namaFotoMakanan;
+    private String[] mIdCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +82,6 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
 
         // Menangkap id makanan yang dikirimkan dari activity sebelumnya
         idMakanan = getIntent().getStringExtra(Constant.KEY_EXTRA_ID_MAKANAN);
-
-        // Mengambil data detail makanan
-        mDetailMakananByUserPresenter.getDetailMakanan(idMakanan);
 
         // Mengambil data category untuk ditampilkan di layar
         mDetailMakananByUserPresenter.getCategory();
@@ -109,17 +113,71 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Constant.STORAGE_PERMISSION_CODE);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constant.STORAGE_PERMISSION_CODE) {
+            //If permission is granted
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Displaying a toast
+                showMessage("Permission granted now you can read the storage");
+                Log.i("Permission on", "onRequestPermissionsResult: " + String.valueOf(grantResults));
+            } else {
+                //Displaying another toast if permission is not granted
+                showMessage("Oops you just denied the permission");
+                Log.i("Permission off", "onRequestPermissionsResult: " + String.valueOf(grantResults));
+
+            }
+        }
+    }
+
     @OnClick({R.id.fab_choose_picture, R.id.btn_update, R.id.btn_delete})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.fab_choose_picture:
+                // Megambil gambar dari storage
+                showFileChooser();
                 break;
             case R.id.btn_update:
+                mDetailMakananByUserPresenter.updateDataMakanan(
+                        this,
+                        filePath,
+                        edtName.getText().toString(),
+                        edtDesc.getText().toString(),
+                        idCategory,
+                        namaFotoMakanan,
+                        idMakanan);
                 break;
             case R.id.btn_delete:
                 Log.i("cek", "onViewClicked: " + idMakanan);
                 mDetailMakananByUserPresenter.deleteMakanan(idMakanan, namaFotoMakanan);
                 break;
+        }
+    }
+
+    private void showFileChooser() {
+        // Membuat object intent untuk dapat memilih data
+        Intent intentGalery = new Intent(Intent.ACTION_PICK);
+        intentGalery.setType("image/*");
+        intentGalery.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intentGalery, "Select picture"), Constant.REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Constant.REQUEST_CODE && requestCode == RESULT_OK && data != null && data.getData() != null){
+             // Mengambil data foto dan memasukkan ke dalam variable filePath
+            filePath = data.getData();
+
+            try {
+                // Mengambil data  gambar lalu di convert ke bitmap
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),filePath);
+                // Tampilkan gambar yang baru dipilih ke server
+                imgPicture.setImageBitmap(bitmap);
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
     }
 
@@ -148,8 +206,19 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
         edtName.setText(makananData.getNamaMakanan());
         edtDesc.setText(makananData.getDescMakanan());
 
-        // Memilih spinner sesuai dengan category makanan yang ada di dalam database
-        spinCategory.setSelection(Integer.valueOf(idCategory));
+        // memilih spinner sesuai denagan category makanan yang ada di dalam database
+        for (int i = 0 ;i < mIdCategory.length; i++){
+
+            Log.i("cek", "isi loop select mIdCategory: " + mIdCategory[i]);
+
+            if (Integer.valueOf(mIdCategory[i]).equals(Integer.valueOf(idCategory))){
+                spinCategory.setSelection(i);
+
+                Log.i("cek", "isi select mIdCategory: " + mIdCategory[i]);
+                Log.i("cek", "isi select i: " + i);
+            }
+        }
+
 
         // Menampilkan gambar makanan
         RequestOptions options = new RequestOptions().error(R.drawable.ic_broken_image).placeholder(R.drawable.ic_broken_image);
@@ -167,18 +236,30 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
     }
 
     @Override
+    public void successUpdate() {
+        mDetailMakananByUserPresenter.getCategory();
+    }
+
+    @Override
     public void showSpinnerCategory(final List<MakananData> categoryDataList) {
         // Membuat data penampung untuk spinner
-        List<String> listSpinner = new ArrayList<>();
+        //List<String> listSpinner = new ArrayList<>();
 
-        listSpinner.clear();
+        String [] namaCategory = new String[categoryDataList.size()];
+        mIdCategory= new String[categoryDataList.size()];
 
         for (int i = 0; i < categoryDataList.size(); i++){
-            listSpinner.add(categoryDataList.get(i).getNamaKategori());
+            //listSpinner.add(categoryDataList.get(i).getNamaKategori());
+            namaCategory[i] = categoryDataList.get(i).getNamaKategori();
+            mIdCategory[i] = categoryDataList.get(i).getIdKategori();
+
+
+            Log.i("cek", "isi show select nama: " + namaCategory[i]);
+            Log.i("cek", "isi show select midCategory: " + mIdCategory[i]);
         }
 
         // Membuat adapter spinner
-        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, listSpinner);
+        ArrayAdapter<String> categorySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, namaCategory);
         // kita Setting untuk menampilkan spinner dengan 1 line
         categorySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         // Memasukkan adapter ke spinner
@@ -188,8 +269,8 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // Mengambil id category sesuai dengan pilihan user
-                idCategory = categoryDataList.get(position).getIdKategori();
                 Log.i("cek idkategori", "onItemSelected: " + idCategory);
+                idCategory = categoryDataList.get(position).getIdKategori();
 
             }
 
@@ -198,5 +279,8 @@ public class DetailMakananByUser extends AppCompatActivity implements DetailMaka
 
             }
         });
+
+        // Mengambil data detail makanan
+        mDetailMakananByUserPresenter.getDetailMakanan(idMakanan);
     }
 }

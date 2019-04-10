@@ -14,6 +14,28 @@ public class MakananResponse {
     @SerializedName("data")
     private List<MakananData> makananDataList;
 
+    @SerializedName("url")
+    private String url;
+
+    @SerializedName("name")
+    private String naem;
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getNaem() {
+        return naem;
+    }
+
+    public void setNaem(String naem) {
+        this.naem = naem;
+    }
+
     public int getResult() {
         return result;
     }
