@@ -1,7 +1,8 @@
 package com.ziyata.makanancrud.utils;
 
 public class Constant {
-    public static final String BASE_URL = "http://192.168.70.86/makanan/";
+    // Base untuk alamat api
+    public static final String BASE_URL = "http://192.168.70.251/makanan/";
     public static final String KEY_LOGIN = "KEY_LOGIN";
     public static final int STORAGE_PERMISSION_CODE = 1;
     public static final int REQUEST_CODE = 2;
